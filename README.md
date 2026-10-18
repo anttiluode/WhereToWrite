@@ -69,3 +69,20 @@ The exact dictionary uses negligible bytes and is a *stronger baseline* than the
 - Gurnee et al., [*Verbalizable Representations Form a Global Workspace in Language Models*](https://arxiv.org/abs/2607.15495) (2026).
 
 Run pure-Python checks with `python -m unittest discover -s tests -v` before downloading a model.
+
+
+## Follow-up after Naula N2 (October 18, 2026)
+
+Naula's 432-trial J-lens experiment found **56.7%** name-site accuracy versus **48.4%** at a different earlier token with gain 8. The name-site advantage is **still OPEN** and might reflect a generic large perturbation. WhereToWrite's default uses a **logit-lens** direction, not Naula's J-lens, so its performance cannot be inferred from Naula. N5 confirmed name decodability; N3 confirmed a nonmonotonic steering region; the proposed N6 slow-core/fast-residue dichotomy failed in its test.
+
+The GUI gain slider now reaches **8**; keep **0.5** as the original reference. Gains from 2 to 8 inject **2–8 times the local activation norm**, not a subtle physiological pulse. Use the unrelated-word control as seriously as the subject site.
+
+The CLI batch now evaluates the six arms on separate rows of **one frozen Qwen forward per question** to reduce repeated GPU overhead. A mock-transformer regression test checks agreement with the original six-pass code. The benchmark reports both strict lowercase-token accuracy and separately case-insensitive top-color correctness (e.g. \` Blue\`), plus paired subject-versus-other-token wins and an **exploratory approximate paired 95% interval**. It is not an independently preregistered gate.
+
+Try a 400-trial comparison when convenient (still may take minutes; don't tune on the same prompts and call the best result held-out):
+
+\`\`\`bat
+python3.13 -m where_to_write.benchmark --gain 2 --trials 400 --report runs/site_gain2_n400.json
+\`\`\`
+
+Optionally test gain 8 in a **separate report file**. The exact oracle dictionary still supplies entity and color; nothing here demonstrates autonomous memory or attention-head attribution.
