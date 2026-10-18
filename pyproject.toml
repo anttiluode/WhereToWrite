@@ -1,0 +1,16 @@
+[build-system]
+requires = ["setuptools>=64"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "where-to-write-microscope"
+version = "0.1.0"
+description = "An interactive intervention-site microscope for a frozen transformer"
+requires-python = ">=3.10"
+dependencies = []
+
+[project.optional-dependencies]
+qwen = ["torch>=2.2", "transformers>=4.45", "accelerate>=0.33"]
+
+[tool.setuptools.packages.find]
+include = ["where_to_write*"]
