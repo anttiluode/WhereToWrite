@@ -77,12 +77,12 @@ Naula's 432-trial J-lens experiment found **56.7%** name-site accuracy versus **
 
 The GUI gain slider now reaches **8**; keep **0.5** as the original reference. Gains from 2 to 8 inject **2–8 times the local activation norm**, not a subtle physiological pulse. Use the unrelated-word control as seriously as the subject site.
 
-The CLI batch now evaluates the six arms on separate rows of **one frozen Qwen forward per question** to reduce repeated GPU overhead. A mock-transformer regression test checks agreement with the original six-pass code. The benchmark reports both strict lowercase-token accuracy and separately case-insensitive top-color correctness (e.g. \` Blue\`), plus paired subject-versus-other-token wins and an **exploratory approximate paired 95% interval**. It is not an independently preregistered gate.
+The CLI batch now evaluates the six arms on separate rows of **one frozen Qwen forward per question** to reduce repeated GPU overhead. A mock-transformer regression test checks agreement with the original six-pass code. The benchmark reports both strict lowercase-token accuracy and separately case-insensitive top-color correctness (e.g. ` Blue`), plus paired subject-versus-other-token wins and an **exploratory approximate paired 95% interval**. It is not an independently preregistered gate.
 
 Try a 400-trial comparison when convenient (still may take minutes; don't tune on the same prompts and call the best result held-out):
 
-\`\`\`bat
+```bat
 python3.13 -m where_to_write.benchmark --gain 2 --trials 400 --report runs/site_gain2_n400.json
-\`\`\`
+```
 
 Optionally test gain 8 in a **separate report file**. The exact oracle dictionary still supplies entity and color; nothing here demonstrates autonomous memory or attention-head attribution.
