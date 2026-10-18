@@ -1,0 +1,349 @@
+{
+  "model": "Qwen/Qwen2.5-0.5B-Instruct",
+  "layer": 16,
+  "gain": 2.0,
+  "seed": 20261018,
+  "direction": "logit-lens",
+  "n": 400,
+  "conditions": {
+    "baseline": {
+      "choice_accuracy": 0.3125,
+      "strict_accuracy": 0.0925,
+      "semantic_top_color_accuracy": 0.0925,
+      "mean_true_color_margin": -0.6949
+    },
+    "subject": {
+      "choice_accuracy": 0.4225,
+      "strict_accuracy": 0.115,
+      "semantic_top_color_accuracy": 0.12,
+      "mean_true_color_margin": -0.2267
+    },
+    "answer": {
+      "choice_accuracy": 1.0,
+      "strict_accuracy": 0.64,
+      "semantic_top_color_accuracy": 0.64,
+      "mean_true_color_margin": 6.2132
+    },
+    "other_token": {
+      "choice_accuracy": 0.4525,
+      "strict_accuracy": 0.0925,
+      "semantic_top_color_accuracy": 0.1075,
+      "mean_true_color_margin": -0.2456
+    },
+    "random_subject": {
+      "choice_accuracy": 0.305,
+      "strict_accuracy": 0.085,
+      "semantic_top_color_accuracy": 0.085,
+      "mean_true_color_margin": -0.8104
+    },
+    "wrong_subject": {
+      "choice_accuracy": 0.225,
+      "strict_accuracy": 0.0625,
+      "semantic_top_color_accuracy": 0.0625,
+      "mean_true_color_margin": -0.9638
+    }
+  },
+  "paired_site_comparison": {
+    "subject_minus_color_token_accuracy": -0.03,
+    "approx_normal_95_ci": [
+      -0.0721,
+      0.0121
+    ],
+    "subject_only_correct": 31,
+    "color_token_only_correct": 43,
+    "ties": 326,
+    "metric": "four_color_accuracy",
+    "note": "Exploratory paired normal interval, not a preregistered significance test"
+  },
+  "examples": [
+    {
+      "name": "Vera",
+      "color": "blue",
+      "choices": {
+        "baseline": "red",
+        "subject": "red",
+        "answer": "blue",
+        "other_token": "red",
+        "random_subject": "red",
+        "wrong_subject": "red"
+      }
+    },
+    {
+      "name": "Eero",
+      "color": "green",
+      "choices": {
+        "baseline": "red",
+        "subject": "red",
+        "answer": "green",
+        "other_token": "red",
+        "random_subject": "red",
+        "wrong_subject": "red"
+      }
+    },
+    {
+      "name": "Aino",
+      "color": "red",
+      "choices": {
+        "baseline": "red",
+        "subject": "red",
+        "answer": "red",
+        "other_token": "yellow",
+        "random_subject": "red",
+        "wrong_subject": "red"
+      }
+    },
+    {
+      "name": "John",
+      "color": "yellow",
+      "choices": {
+        "baseline": "red",
+        "subject": "red",
+        "answer": "yellow",
+        "other_token": "red",
+        "random_subject": "red",
+        "wrong_subject": "red"
+      }
+    },
+    {
+      "name": "Mary",
+      "color": "red",
+      "choices": {
+        "baseline": "red",
+        "subject": "red",
+        "answer": "red",
+        "other_token": "red",
+        "random_subject": "red",
+        "wrong_subject": "red"
+      }
+    },
+    {
+      "name": "David",
+      "color": "blue",
+      "choices": {
+        "baseline": "red",
+        "subject": "red",
+        "answer": "blue",
+        "other_token": "red",
+        "random_subject": "red",
+        "wrong_subject": "red"
+      }
+    },
+    {
+      "name": "Cleo",
+      "color": "red",
+      "choices": {
+        "baseline": "blue",
+        "subject": "blue",
+        "answer": "red",
+        "other_token": "blue",
+        "random_subject": "blue",
+        "wrong_subject": "blue"
+      }
+    },
+    {
+      "name": "Xavier",
+      "color": "green",
+      "choices": {
+        "baseline": "blue",
+        "subject": "red",
+        "answer": "green",
+        "other_token": "blue",
+        "random_subject": "blue",
+        "wrong_subject": "red"
+      }
+    },
+    {
+      "name": "Vera",
+      "color": "green",
+      "choices": {
+        "baseline": "red",
+        "subject": "green",
+        "answer": "green",
+        "other_token": "green",
+        "random_subject": "red",
+        "wrong_subject": "red"
+      }
+    },
+    {
+      "name": "Eero",
+      "color": "blue",
+      "choices": {
+        "baseline": "red",
+        "subject": "blue",
+        "answer": "blue",
+        "other_token": "red",
+        "random_subject": "red",
+        "wrong_subject": "green"
+      }
+    },
+    {
+      "name": "Aino",
+      "color": "red",
+      "choices": {
+        "baseline": "red",
+        "subject": "red",
+        "answer": "red",
+        "other_token": "red",
+        "random_subject": "red",
+        "wrong_subject": "red"
+      }
+    },
+    {
+      "name": "John",
+      "color": "blue",
+      "choices": {
+        "baseline": "blue",
+        "subject": "blue",
+        "answer": "blue",
+        "other_token": "blue",
+        "random_subject": "blue",
+        "wrong_subject": "red"
+      }
+    },
+    {
+      "name": "Mary",
+      "color": "blue",
+      "choices": {
+        "baseline": "blue",
+        "subject": "blue",
+        "answer": "blue",
+        "other_token": "green",
+        "random_subject": "blue",
+        "wrong_subject": "green"
+      }
+    },
+    {
+      "name": "David",
+      "color": "red",
+      "choices": {
+        "baseline": "red",
+        "subject": "red",
+        "answer": "red",
+        "other_token": "red",
+        "random_subject": "red",
+        "wrong_subject": "green"
+      }
+    },
+    {
+      "name": "Cleo",
+      "color": "red",
+      "choices": {
+        "baseline": "blue",
+        "subject": "blue",
+        "answer": "red",
+        "other_token": "blue",
+        "random_subject": "blue",
+        "wrong_subject": "blue"
+      }
+    },
+    {
+      "name": "Xavier",
+      "color": "blue",
+      "choices": {
+        "baseline": "blue",
+        "subject": "red",
+        "answer": "blue",
+        "other_token": "blue",
+        "random_subject": "blue",
+        "wrong_subject": "green"
+      }
+    },
+    {
+      "name": "Vera",
+      "color": "blue",
+      "choices": {
+        "baseline": "blue",
+        "subject": "blue",
+        "answer": "blue",
+        "other_token": "blue",
+        "random_subject": "blue",
+        "wrong_subject": "blue"
+      }
+    },
+    {
+      "name": "Eero",
+      "color": "red",
+      "choices": {
+        "baseline": "blue",
+        "subject": "blue",
+        "answer": "red",
+        "other_token": "blue",
+        "random_subject": "blue",
+        "wrong_subject": "blue"
+      }
+    },
+    {
+      "name": "Aino",
+      "color": "red",
+      "choices": {
+        "baseline": "blue",
+        "subject": "blue",
+        "answer": "red",
+        "other_token": "yellow",
+        "random_subject": "blue",
+        "wrong_subject": "blue"
+      }
+    },
+    {
+      "name": "John",
+      "color": "yellow",
+      "choices": {
+        "baseline": "red",
+        "subject": "red",
+        "answer": "yellow",
+        "other_token": "red",
+        "random_subject": "blue",
+        "wrong_subject": "red"
+      }
+    },
+    {
+      "name": "Mary",
+      "color": "red",
+      "choices": {
+        "baseline": "red",
+        "subject": "red",
+        "answer": "red",
+        "other_token": "red",
+        "random_subject": "red",
+        "wrong_subject": "blue"
+      }
+    },
+    {
+      "name": "David",
+      "color": "red",
+      "choices": {
+        "baseline": "blue",
+        "subject": "blue",
+        "answer": "red",
+        "other_token": "blue",
+        "random_subject": "blue",
+        "wrong_subject": "blue"
+      }
+    },
+    {
+      "name": "Cleo",
+      "color": "red",
+      "choices": {
+        "baseline": "blue",
+        "subject": "blue",
+        "answer": "red",
+        "other_token": "blue",
+        "random_subject": "blue",
+        "wrong_subject": "blue"
+      }
+    },
+    {
+      "name": "Xavier",
+      "color": "blue",
+      "choices": {
+        "baseline": "blue",
+        "subject": "blue",
+        "answer": "blue",
+        "other_token": "blue",
+        "random_subject": "blue",
+        "wrong_subject": "blue"
+      }
+    }
+  ],
+  "disclosure": "Oracle dictionary/address/value; no learned native binding. Color-choice versus unrestricted next-token are different metrics."
+}
