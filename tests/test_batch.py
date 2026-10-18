@@ -6,7 +6,7 @@ import unittest
 from types import SimpleNamespace
 
 from where_to_write.probe import ARMS, ArmResult, QwenProbe, top_token_is_color
-from where_to_write.benchmark import run
+from where_to_write.benchmark import run, case_schedule
 
 
 class MockProbe:
@@ -29,6 +29,25 @@ class BatchTests(unittest.TestCase):
         self.assertTrue(top_token_is_color(' Blue', 'blue'))
         self.assertFalse(top_token_is_color(' blueberry', 'blue'))
 
+    def test_legacy_repeats(self):
+        cases = case_schedule(400, 20261018)
+        self.assertEqual(len(cases), 400)
+        self.assertEqual(len(set(cases)), 95)
+
+    def test_balanced_cases_unique(self):
+        cases = case_schedule(400, 20261018, design='balanced')
+        self.assertEqual(len(cases), 96)
+        self.assertEqual(len(set(cases)), 96)
+        self.assertEqual(cases, case_schedule(96, 20261018, design='balanced'))
+
+    def test_balanced_report(self):
+        with tempfile.TemporaryDirectory() as td:
+            report = run(MockProbe(), design='balanced', out=str(Path(td) / 'balanced.json'))
+            self.assertEqual(report['n'], 96)
+            self.assertEqual(report['distinct_cases'], 96)
+            self.assertEqual(report['duplicate_cases'], 0)
+            self.assertEqual(len(report['case_results']), 96)
+
     def test_paired_statistics(self):
         with tempfile.TemporaryDirectory() as td:
             report = run(MockProbe(), trials=24, out=str(Path(td) / 'report.json'))
@@ -36,6 +55,7 @@ class BatchTests(unittest.TestCase):
             self.assertEqual(report['paired_site_comparison']['color_token_only_correct'], 0)
             self.assertEqual(report['paired_site_comparison']['subject_minus_color_token_accuracy'], 1)
             self.assertEqual(report['conditions']['answer']['semantic_top_color_accuracy'], 1)
+            self.assertEqual(len(report['case_results']), 24)
 
     @unittest.skipUnless(importlib.util.find_spec('torch') is not None, 'PyTorch optional in CI')
     def test_batched_equals_single_forwards(self):
