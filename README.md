@@ -8,6 +8,31 @@ This repo isolates a single causal question suggested by [LiveMode](https://gith
 
 It **does not** claim to solve autonomous live learning. The writer uses a transparent exact dictionary; both the entity address and the value are supplied explicitly. The experiment varies **only injection location and direction**. The base Qwen weights remain frozen. There is no extra training, no hash addresses and no 30-minute J-lens computation in the default path.
 
+## Measured result: 400 evaluations at gain 2, layer 16 (October 18, 2026)
+
+**The privileged subject-token hypothesis is not supported at this setting.** See the [committed report](runs/site_gain2_n400.json) and [research ledger](docs/W1_GAIN2_400.md).
+
+| Injection site | Four-color accuracy | Unrestricted exact-token accuracy |
+|---|---:|---:|
+| None | 31.25% | 9.25% |
+| Subject name | 42.25% | 11.50% |
+| Unrelated word `color` | **45.25%** | 9.25% |
+| Final answer token | **100%** | **64%** |
+| Random direction at subject | 30.50% | 8.50% |
+| Wrong-color direction at subject | 22.50% | 6.25% |
+
+The paired subject-minus-unrelated-site contrast is **−3.0 percentage points** (31 subject-only correct, 43 unrelated-token-only correct, 326 ties). There is no observed advantage for writing on the name token over the word `color`. Both are better than random-direction injection on this four-color diagnostic; the answer site gives strong direct steering, not native associative retrieval.
+
+**Statistical correction:** the fixed-seed 400-evaluation schedule contains only **95 distinct** name × prompt × color cases and **305 duplicates**. The original reported normal 95% interval `[-0.0721, 0.0121]` relies on an independence assumption violated by these repeats; it is a historical exploratory statistic, *not* a defensible independent-trial interval. Only eight names and three phrasings were used. The result is about **logit-lens** directions at gain 2, not Naula's J-lens configuration.
+
+A smaller balanced follow-up is now supported, testing each of the **96 distinct** cases exactly once and saving all per-case predictions:
+
+```bat
+python3.13 -m where_to_write.benchmark --design balanced --gain 2 --report runs/site_gain2_balanced96.json
+```
+
+The balanced grid improves coverage and auditability but is **not a new independent holdout**; its names, colors, and prompt templates were already tested. Avoid tuning on these cases and calling the result prospective.
+
 ## Windows GUI — start here
 
 Requires Python 3.10+, Windows with Tkinter, and ideally an NVIDIA GPU. First run downloads Qwen 0.5B (~1 GB).
