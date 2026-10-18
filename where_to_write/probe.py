@@ -21,6 +21,11 @@ PROMPTS = (
 ARMS = ('baseline', 'subject', 'answer', 'other_token', 'random_subject', 'wrong_subject')
 
 
+def top_token_is_color(token: str, color: str) -> bool:
+    """Recognize capitalization variants without changing exact-token strict accuracy."""
+    return token.strip().casefold() == color.casefold()
+
+
 def subject_span(text: str, name: str) -> tuple[int, int]:
     """Find the last whole-word name occurrence (without guessing token IDs)."""
     if not name.strip():
@@ -47,6 +52,7 @@ class ArmResult:
     choice_correct: bool
     conditional_color_probs: dict[str, float]
     true_margin: float
+    semantic_top_correct: bool = False
 
 
 class QwenProbe:
@@ -135,6 +141,46 @@ class QwenProbe:
         finally:
             handle.remove()
 
+    def _logits_many(self, encoded, arms, color: str, subject_pos: int, other_pos: int,
+                     gain: float):
+        """Matched interventions in one batch: rows cannot attend to other rows.
+
+        Reduces launch overhead during long GPU benchmarks. Equivalent to
+        independent forwards in eval mode up to batch-kernel roundoff.
+        """
+        torch = self.torch
+        n = len(arms)
+        batched = {key: value.expand(n, *value.shape[1:]).contiguous()
+                   for key, value in encoded.items()}
+        t_len = encoded['input_ids'].shape[1]
+        target = COLORS.index(color)
+
+        def hook(_module, _input, output):
+            hidden = output[0] if isinstance(output, tuple) else output
+            changed = hidden.clone()
+            for i, arm in enumerate(arms):
+                if arm == 'baseline':
+                    continue
+                site = (subject_pos if arm in ('subject', 'random_subject', 'wrong_subject')
+                        else other_pos if arm == 'other_token' else t_len - 1)
+                if arm == 'wrong_subject':
+                    direction = self.directions[(target + 1) % len(COLORS)]
+                elif arm == 'random_subject':
+                    direction = self.random_direction
+                else:
+                    direction = self.directions[target]
+                pulse = direction.to(changed.dtype) * (float(gain) * hidden[i, site].float().norm())
+                changed[i, site] += pulse
+            return (changed, *output[1:]) if isinstance(output, tuple) else changed
+
+        handle = self.layers[self.layer].register_forward_hook(hook)
+        try:
+            with torch.inference_mode():
+                logits = self.model(**batched, use_cache=False).logits[:, -1].float().cpu()
+        finally:
+            handle.remove()
+        return {arm: logits[i] for i, arm in enumerate(arms)}
+
     def evaluate(self, name: str, color: str, template: str = PROMPTS[0],
                  gain: float = 0.5, arms=ARMS) -> dict[str, ArmResult]:
         if color not in COLORS or '{name}' not in template:
@@ -146,10 +192,11 @@ class QwenProbe:
         torch = self.torch
         output = {}
         target = COLORS.index(color)
+        if not arms or len(set(arms)) != len(arms) or any(arm not in ARMS for arm in arms):
+            raise ValueError('Arms must be a nonempty set of known unique interventions')
+        logits_by_arm = self._logits_many(encoded, arms, color, sp, cp, gain)
         for arm in arms:
-            if arm not in ARMS:
-                raise ValueError(f'Unknown arm {arm}')
-            logits = self._logits(encoded, arm, color, sp, cp, gain)
+            logits = logits_by_arm[arm]
             candidate_logits = logits[self.color_ids]
             probs = torch.softmax(candidate_logits, dim=0)
             predicted = int(candidate_logits.argmax())
@@ -159,5 +206,6 @@ class QwenProbe:
                 arm, self.tok.decode([best_token]), best_token == self.color_ids[target],
                 COLORS[predicted], predicted == target,
                 {c: float(probs[i]) for i, c in enumerate(COLORS)},
-                float(candidate_logits[target] - other_max))
+                float(candidate_logits[target] - other_max),
+                top_token_is_color(self.tok.decode([best_token]), color))
         return output

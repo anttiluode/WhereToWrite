@@ -54,7 +54,7 @@ class Window:
         self.load_button = ttk.Button(load, text='Load Qwen', command=self._load)
         self.load_button.pack(side='left', padx=8)
         ttk.Label(load, text='Gain').pack(side='left', padx=(8, 3))
-        ttk.Scale(load, variable=self.gain, from_=0.0, to=2.0, length=135).pack(side='left')
+        ttk.Scale(load, variable=self.gain, from_=0.0, to=8.0, length=155).pack(side='left')
         ttk.Label(load, textvariable=self.gain, width=6).pack(side='left')
 
         editor = ttk.LabelFrame(root, text='Experience — explicit memory (oracle name binding)', padding=8)
@@ -174,7 +174,7 @@ class Window:
         self.output.insert('end', f'QUESTION   {self.template.get().format(name=name)}\n')
         self.output.insert('end', f'FACT       {name} = {color}   |  layer={self.model.layer}, gain={gain:.2f}\n')
         self.output.insert('end', 'Four-color probabilities below are CONDITIONAL on choosing one of four colors.\n')
-        self.output.insert('end', 'Strict means the top token across the FULL vocabulary is correct.\n')
+        self.output.insert('end', 'Exact strict = lowercase top color token; capitalized color tracked separately.\n')
         self.output.configure(state='disabled')
         c = self.bars
         c.delete('all')
@@ -185,14 +185,14 @@ class Window:
         for i, (arm, res) in enumerate(rows):
             y = 20 + i * 42
             prob = res.conditional_color_probs[color]
-            fill = '#35c594' if res.strict_correct else '#edab59' if res.choice_correct else '#d86469'
+            fill = '#35c594' if res.semantic_top_correct else '#edab59' if res.choice_correct else '#d86469'
             c.create_text(10, y, text=DISPLAY[arm], fill='#e9eff5', anchor='w', font=('Segoe UI', 9))
             c.create_rectangle(x0, y-8, x1, y+8, fill='#273348', outline='')
             c.create_rectangle(x0, y-8, x0 + (x1-x0)*prob, y+8, fill=fill, outline='')
             c.create_text(x1 + 8, y, text=f'{prob:5.1%}  → {res.choice}', fill='#e8eef7', anchor='w', font=('Consolas', 9))
-            c.create_text(x1+8, y+14, text=('strict ✓' if res.strict_correct else f'top={res.top_token!r}'),
+            c.create_text(x1+8, y+14, text=('exact strict ✓' if res.strict_correct else 'case variant ✓' if res.semantic_top_correct else f'top={res.top_token!r}'),
                           fill='#aebcd0', anchor='w', font=('Consolas', 8))
-        self.status.set('Finished. Green = correct unrestricted top token; orange = correct among four colors only.')
+        self.status.set('Finished. Green = correct top-word color (case-insensitive); orange = correct only among four lowercase tokens.')
 
     def _close(self):
         self.pool.shutdown(wait=False, cancel_futures=True)
