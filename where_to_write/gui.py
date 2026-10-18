@@ -134,13 +134,16 @@ class Window:
                 self.root.after(100, poll)
                 return
             self.running = False
-            self.load_button.configure(state='normal')
-            self.ask_button.configure(state='normal' if self.model else 'disabled')
             try:
                 callback(future.result())
             except Exception as exc:
                 self.status.set(f'Error: {exc}')
                 messagebox.showerror('Qwen error', str(exc))
+            finally:
+                # The successful load callback assigns self.model. Enable Ask
+                # AFTER that callback, not before it, or it stays disabled.
+                self.load_button.configure(state='normal')
+                self.ask_button.configure(state='normal' if self.model else 'disabled')
         self.root.after(100, poll)
 
     def _load(self):
